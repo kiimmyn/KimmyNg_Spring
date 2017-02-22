@@ -1,8 +1,0 @@
-
-public class WalkUpTicket extends Ticket{
-	int ticketNumber;
-	int ticketPrice;
-	
-
-
-}
