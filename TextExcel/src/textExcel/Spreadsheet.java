@@ -4,26 +4,32 @@ package textExcel;
 
 public class Spreadsheet implements Grid
 {
-
+	private int row;
+	private int column;
+	
+		Cell[][] excellSpreadsheet = new EmptyCell [12][20];
+		
 	@Override
 	public String processCommand(String command)
 	{
 		// TODO Auto-generated method stub
-		return null;
+		return command;
 	}
 
 	@Override
 	public int getRows()
 	{
 		// TODO Auto-generated method stub
-		return 0;
+		row = 20;
+		return row;
 	}
 
 	@Override
 	public int getCols()
 	{
 		// TODO Auto-generated method stub
-		return 0;
+		column= 12;
+		return column;
 	}
 
 	@Override
