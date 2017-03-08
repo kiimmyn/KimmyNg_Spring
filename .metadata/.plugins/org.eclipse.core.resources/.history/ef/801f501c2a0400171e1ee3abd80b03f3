@@ -31,7 +31,7 @@ public class Spreadsheet implements Grid
 		} else if (splitted[1].equals("=")) {
 			Location equals = new SpreadsheetLocation(splitted[0]);
 			Cell change = getCell(equals);
-			change = new TextCell (splitted[2]);
+			change = new TextCell splitted[2]);
 			return getGridText();
 		} else if (splitted.length == 1) {
 			Location one = new SpreadsheetLocation(splitted[0]);
@@ -40,6 +40,8 @@ public class Spreadsheet implements Grid
 		}
 		return command;
 	
+		// TODO Auto-generated method stub
+		return command;
 	}
 
 	@Override
