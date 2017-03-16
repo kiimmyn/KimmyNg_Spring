@@ -4,86 +4,99 @@ package textExcel;
 
 public class Spreadsheet implements Grid
 {
-	private int row;
-	private int column;
 	
-		Cell[][] excellSpreadsheet = new EmptyCell [12][20];
-		
-	@Override
-	public String processCommand(String command)
-	{
-		String[] splitted = command.split(" ");
-		if (splitted.equals("clear")) {
-			if (splitted.length > 6) {
-				// clears the given cell
-				Location clear= new SpreadsheetLocation(splitted[1]);
-				Cell change=getCell(clear);
-				change=new EmptyCell();
-			} else {
-				// clears the entire spreadsheet
-				excellSpreadsheet=new Cell [20][12];
-				for(int i=0; i<20; i++){
-					for(int j=0; j<12;j++){
-						excellSpreadsheet[i][j]=new EmptyCell();
-					}
-				}
+	Cell[][] excelSpreadsheet;
+	
+	public Spreadsheet(){
+		excelSpreadsheet= new Cell[getRows()][getCols()];
+		for(int i = 0; i < getRows(); i++){
+			for(int j = 0; j < getCols(); j++){
+				excelSpreadsheet[i][j] = new EmptyCell();
 			}
-		} else if (splitted[1].equals("=")) {
-			Location equals = new SpreadsheetLocation(splitted[0]);
-			Cell change = getCell(equals);
-			change = new TextCell (splitted[2]);
-			return getGridText();
-		} else if (splitted.length == 1) {
-			Location one = new SpreadsheetLocation(splitted[0]);
-			Cell n = getCell(one);
-			return n.fullCellText();
 		}
-		return command;
-	
 	}
 
 	@Override
+	public String processCommand(String command){  	
+		
+		String[] splitted = command.split(" ");
+		
+		if(command.equals(" ")){
+			return "";
+		}
+		else if(command.equalsIgnoreCase("clear")){
+			for(int i = 0; i < getRows(); i++){
+				for(int j = 0; j < getCols(); j++){
+					excelSpreadsheet[i][j] = new EmptyCell();
+				}
+			}
+			return getGridText();	
+		}
+		else if(command.toLowerCase().contains("clear ")){
+			String changeLoc = splitted[1];
+			SpreadsheetLocation location = new SpreadsheetLocation(changeLoc);
+			excelSpreadsheet[location.getRow()][location.getCol()] = new EmptyCell();
+			return getGridText();
+		}
+		else if(command.contains("=")){
+			String[] splitInput = command.split(" = ");
+			String loc = splitInput[0];
+			String cell = splitInput[1];
+			if(splitInput.length >= 3){
+				System.out.println(cell += " = " + splitInput[2]);
+			}
+			if(cell.contains("\"")){
+				cell = cell.replace("\"", "");
+			}
+			SpreadsheetLocation location = new SpreadsheetLocation(loc);
+			excelSpreadsheet[location.getRow()][location.getCol()] = new TextCell(cell);
+	    	return getGridText(); 
+		}
+		else if(splitted.length <= 3){
+			SpreadsheetLocation location = new SpreadsheetLocation(command);
+			return excelSpreadsheet[location.getRow()][location.getCol()].fullCellText();
+		}
+		return getGridText();
+	}
+
+	
+	@Override
 	public int getRows()
 	{
-		// TODO Auto-generated method stub
-		row = 20;
-		return row;
+		return 20;
 	}
 
 	@Override
 	public int getCols()
 	{
-		// TODO Auto-generated method stub
-		column= 12;
-		return column;
+		return 12;
 	}
 
 	@Override
 	public Cell getCell(Location loc)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return excelSpreadsheet[loc.getRow()][loc.getCol()];	
 	}
 
 	@Override
 	public String getGridText(){
 		String grid = "   |";
-		for(char i = 'A'; i<='L'; i++){
-			grid += i + "         |";
+		for(int i=0; i < getCols(); i++){
+			grid += (char) (i + 'A') + "         |";
 		}
-		System.out.println(grid);
-		String rowLabel = "";
-		for (int row = 0; row < getRows(); row++){
-			if (row < 9) {
-				rowLabel = (row+1) + "  |";
-			} else {
-				rowLabel = (row+1) + " |";
+		grid += "\n";
+		for(int i=1; i <= getRows(); i++){
+			if(i > 9){
+				grid += i + " ";
 			}
-			for(int j = 0; j<12; j++){
-				rowLabel += excellSpreadsheet[row][j].abbreviatedCellText() + "|";
+			if(i < 10){
+				grid += i + "  ";
 			}
-			System.out.println(rowLabel);
+			for(int j=0; j < getCols(); j++){
+				grid += "|" + excelSpreadsheet[i-1][j].abbreviatedCellText();
+			}
+			grid += "|\n";
 		}
-		return "";
+		return grid;
 	}
 }

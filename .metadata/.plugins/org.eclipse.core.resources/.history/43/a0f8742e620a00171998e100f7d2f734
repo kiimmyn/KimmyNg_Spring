@@ -66,10 +66,24 @@ public class Spreadsheet implements Grid
 	}
 
 	@Override
-	public String getGridText()
-	{
-		// TODO Auto-generated method stub
-		return null;
+	public String getGridText(){
+		String grid = "   |";
+		for(char i = 'A'; i<='L'; i++){
+			grid += i + "         |";
+		}
+		System.out.println(grid);
+		String rowLabel = "";
+		for (int row = 0; row < getRows(); row++){
+			if (row < 9) {
+				rowLabel = (row+1) + "  |";
+			} else {
+				rowLabel = (row+1) + " |";
+			}
+			for(int j = 0; j<12; j++){
+				rowLabel += excellSpreadsheet[row][j].abbreviatedCellText() + "|";
+			}
+			System.out.println(rowLabel);
+		}
+		return "";
 	}
-
 }
