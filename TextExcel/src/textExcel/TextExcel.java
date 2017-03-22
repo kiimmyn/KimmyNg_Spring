@@ -11,7 +11,7 @@ public class TextExcel
 
 	public static void main(String[] args)
 	{
-	    // Add your command loop here
+	    // Add command loop here
 		Scanner console = new Scanner(System.in);
 		Spreadsheet excelSpreadsheet= new Spreadsheet();
 		String input = console.nextLine();
