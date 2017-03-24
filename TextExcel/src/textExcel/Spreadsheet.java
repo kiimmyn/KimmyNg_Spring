@@ -1,14 +1,18 @@
 package textExcel;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintStream;
+import java.util.Scanner;
+
 // Update this file with your own code.
 
 public class Spreadsheet implements Grid
 {
 	
-	Cell[][] excelSpreadsheet;
+	Cell[][] excelSpreadsheet = new Cell[getRows()][getCols()];		// 20 rows, 12 columns
 	
 	public Spreadsheet(){
-		excelSpreadsheet= new Cell[getRows()][getCols()];
 		for(int i = 0; i < getRows(); i++){
 			for(int j = 0; j < getCols(); j++){
 				excelSpreadsheet[i][j] = new EmptyCell();
@@ -19,12 +23,22 @@ public class Spreadsheet implements Grid
 	@Override
 	public String processCommand(String command){  	
 		
+		// split command at spaces
 		String[] splitted = command.split(" ");
+		SpreadsheetLocation loc;
 		
-		if(command.equals(" ")){
-			return "";
+		if(splitted[0].toLowerCase().equals("save")) {
+			return writeFile(splitted[1]);
+		} 
+		else if(splitted[0].toLowerCase().equals("open")) {
+			return readFile(splitted[1]);
 		}
-		else if(command.equalsIgnoreCase("clear")){
+		
+		if(splitted.length == 0){
+			return command;
+		}
+		// if command, clear entire sheet
+		else if(command.toLowerCase().equals("clear")){ //command changes into lower case; gets rid of case issue
 			for(int i = 0; i < getRows(); i++){
 				for(int j = 0; j < getCols(); j++){
 					excelSpreadsheet[i][j] = new EmptyCell();
@@ -32,44 +46,57 @@ public class Spreadsheet implements Grid
 			}
 			return getGridText();	
 		}
-		else if(command.toLowerCase().contains("clear ")){
-			String changeLoc = splitted[1];
-			SpreadsheetLocation location = new SpreadsheetLocation(changeLoc);
-			excelSpreadsheet[location.getRow()][location.getCol()] = new EmptyCell();
+		// if command is to clear a specific cell
+		else if(splitted.length == 2){
+			String location = splitted[1];
+			loc = new SpreadsheetLocation(location);
+			excelSpreadsheet[loc.getRow()][loc.getCol()] = new EmptyCell();
 			return getGridText();
 		}
-		else if(command.contains("=")){
+		// if command is to assigning to a new cell 
+		else if(command.contains("\"")){
 			String[] splitInput = command.split(" = ");
-			String loc = splitInput[0];
-			String cell = splitInput[1];
+			String location = splitInput[0];
+			String value = splitInput[1];
 			if(splitInput.length >= 3){
-				System.out.println(cell += " = " + splitInput[2]);
+				System.out.println(value += " = " + splitInput[2]);
 			}
-			if(cell.contains("\"")){
-				cell = cell.replace("\"", "");
-			}
-			SpreadsheetLocation location = new SpreadsheetLocation(loc);
-			excelSpreadsheet[location.getRow()][location.getCol()] = new TextCell(cell);
+			loc = new SpreadsheetLocation(location);
+			excelSpreadsheet[loc.getRow()][loc.getCol()] = new TextCell(value.substring(1, value.length()-1)); // pass in without the quotes
 	    	return getGridText(); 
+		}	
+		else if(splitted.length>1&&splitted[1].equals("=")){
+			loc=new SpreadsheetLocation(splitted[0]);
+			if (splitted[2].charAt(0) == 34){ //text cell
+				excelSpreadsheet [loc.getRow()] [loc.getCol()] = new TextCell (splitted[2].trim());
+			}
+			else if (splitted[2].substring(splitted[2].length()-1).equals("%")){ //a percent cell
+				excelSpreadsheet [loc.getRow()] [loc.getCol()] = new PercentCell (splitted[2].trim());	
+			}
+			else if (splitted[2].charAt(0) == ('(')){ //a formula cell
+				excelSpreadsheet [loc.getRow()] [loc.getCol()] = new FormulaCell (splitted[2].trim());	
+			}
+			else { //value cell
+				excelSpreadsheet [loc.getRow()] [loc.getCol()] = new ValueCell (splitted[2].trim());	
+			}
+			return getGridText();
+		} 	
+		else {
+			loc = new SpreadsheetLocation(command);
+			return excelSpreadsheet[loc.getRow()][loc.getCol()].fullCellText();
 		}
-		else if(splitted.length <= 3){
-			SpreadsheetLocation location = new SpreadsheetLocation(command);
-			return excelSpreadsheet[location.getRow()][location.getCol()].fullCellText();
-		}
-		return getGridText();
 	}
-
 	
 	@Override
 	public int getRows()
 	{
-		return 20;
+		return 20;	// # of rows
 	}
 
 	@Override
 	public int getCols()
 	{
-		return 12;
+		return 12;	// # of columns
 	}
 
 	@Override
@@ -80,8 +107,8 @@ public class Spreadsheet implements Grid
 
 	@Override
 	public String getGridText(){
-		String grid = "   |";
-		for(int i=0; i < getCols(); i++){
+		String grid = "   |";	//left of spreadsheet
+		for(int i=0; i < getCols(); i++){	// create top of the column
 			grid += (char) (i + 'A') + "         |";
 		}
 		grid += "\n";
@@ -98,5 +125,64 @@ public class Spreadsheet implements Grid
 			grid += "|\n";
 		}
 		return grid;
+	}
+	
+	private String writeFile (String filename){
+	     PrintStream outputFile;
+	     try {
+	    	 outputFile = new PrintStream(new File(filename));
+	     }
+	     catch (FileNotFoundException e) {
+	    	 return "File not found: " + filename;
+	     }
+	     String enter="";
+			//for loop checks all cells to return location, type, values stored in each
+			for(int i=0;i<20;i++){
+				for(char j='A';j<'M';j++){
+					Cell test=excelSpreadsheet[i][j-'A'];
+					if(excelSpreadsheet[i][j-'A'] instanceof FormulaCell){
+						enter+=j+""+(i+1)+",FormulaCell,"+test.fullCellText()+"\n";
+					}
+					if(excelSpreadsheet[i][j-'A'] instanceof TextCell){
+						enter+=j+""+(i+1)+",TextCell,"+test.fullCellText()+"\n";
+					}
+					if(excelSpreadsheet[i][j-'A'] instanceof ValueCell){
+						enter+=j+""+(i+1)+",ValueCell,"+test.fullCellText()+"\n";
+					}
+					if(excelSpreadsheet[i][j-'A'] instanceof PercentCell){
+						enter+=j+""+(i+1)+",PercentCell,"+test.fullCellText()+"\n";
+					}
+				}	
+			}
+			outputFile.print(enter);
+			outputFile.close();
+			return  "0";
+	}
+	private String readFile(String filename){
+		Scanner inputFile;
+		try {
+			inputFile = new Scanner(new File(filename));
+		}
+		catch (FileNotFoundException e) {
+			return "File not found: " + filename;
+		}
+		while(inputFile.hasNextLine()){
+			//Reads input and decides what cell to construct
+			String line=inputFile.nextLine();
+			String[] lineParts = line.split(",");
+			SpreadsheetLocation loc = new SpreadsheetLocation(lineParts[0]);
+			if(lineParts[1].equals("ValueCell"))
+				excelSpreadsheet[loc.getRow()][loc.getCol()]=new ValueCell(lineParts[2]);
+			else if(lineParts[1].equals("TextCell"))
+				excelSpreadsheet[loc.getRow()][loc.getCol()]=new TextCell(lineParts[2]);
+			else if(lineParts[1].equals("FormulaCell"))
+				excelSpreadsheet[loc.getRow()][loc.getCol()]=new TextCell(lineParts[2]);
+			else if(lineParts[1].equals("PercentCell")){
+				String percent = Double.parseDouble(lineParts[2])*100.0+"";
+				excelSpreadsheet[loc.getRow()][loc.getCol()]=new PercentCell(percent);
+			}
+		}
+		inputFile.close();
+		return getGridText();
 	}
 }
