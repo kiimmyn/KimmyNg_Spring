@@ -10,7 +10,7 @@ import java.util.Scanner;
 public class Spreadsheet implements Grid
 {
 	
-	Cell[][] excelSpreadsheet = new Cell[getRows()][getCols()];	// 20 rows, 12 columns
+	Cell[][] excelSpreadsheet = new Cell[getRows()][getCols()];		// 20 rows, 12 columns
 	
 	public Spreadsheet(){
 		for(int i = 0; i < getRows(); i++){
