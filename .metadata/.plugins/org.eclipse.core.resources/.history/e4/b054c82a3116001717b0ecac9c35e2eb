@@ -10,7 +10,7 @@ import java.util.Scanner;
 public class Spreadsheet implements Grid
 {
 	
-	Cell[][] excelSpreadsheet = new Cell[getRows()][getCols()];		// 20 rows, 12 columns
+	Cell[][] excelSpreadsheet = new Cell[getRows()][getCols()];	// 20 rows, 12 columns
 	
 	public Spreadsheet(){
 		for(int i = 0; i < getRows(); i++){
@@ -34,7 +34,7 @@ public class Spreadsheet implements Grid
 			return readFile(splitted[1]);
 		}
 		
-		if(splitted.length == 0){
+		if(command.equals("")){
 			return command;
 		}
 		// if command, clear entire sheet
@@ -90,13 +90,13 @@ public class Spreadsheet implements Grid
 	@Override
 	public int getRows()
 	{
-		return 20;	// number of rows
+		return 20;	// # of rows
 	}
 
 	@Override
 	public int getCols()
 	{
-		return 12;	// number of columns
+		return 12;	// # of columns
 	}
 
 	@Override
@@ -107,8 +107,8 @@ public class Spreadsheet implements Grid
 
 	@Override
 	public String getGridText(){
-		String grid = "   |";	// top left part of the spreadsheet
-		for(int i=0; i < getCols(); i++){	// create the top part of the column
+		String grid = "   |";	//left of spreadsheet
+		for(int i=0; i < getCols(); i++){	// create top of the column
 			grid += (char) (i + 'A') + "         |";
 		}
 		grid += "\n";

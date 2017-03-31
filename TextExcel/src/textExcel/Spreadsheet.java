@@ -21,24 +21,24 @@ public class Spreadsheet implements Grid
 	}
 
 	@Override
-	public String processCommand(String command){  	
+	public String processCommand(String direct){  	
 		
 		// split command at spaces
-		String[] splitted = command.split(" ");
+		String[] split = direct.split(" ");
 		SpreadsheetLocation loc;
 		
-		if(splitted[0].toLowerCase().equals("save")) {
-			return writeFile(splitted[1]);
+		if(split[0].toLowerCase().equals("save")) {
+			return writeFile(split[1]);
 		} 
-		else if(splitted[0].toLowerCase().equals("open")) {
-			return readFile(splitted[1]);
+		else if(split[0].toLowerCase().equals("access")) {
+			return readFile(split[1]);
 		}
 		
-		if(command.equals("")){
-			return command;
+		if(direct.equals("")){
+			return direct;
 		}
 		// if command, clear entire sheet
-		else if(command.toLowerCase().equals("clear")){ //command changes into lower case; gets rid of case issue
+		else if(direct.toLowerCase().equals("clear")){ //command changes into lower case; gets rid of case issue
 			for(int i = 0; i < getRows(); i++){
 				for(int j = 0; j < getCols(); j++){
 					excelSpreadsheet[i][j] = new EmptyCell();
@@ -47,42 +47,42 @@ public class Spreadsheet implements Grid
 			return getGridText();	
 		}
 		// if command is to clear a specific cell
-		else if(splitted.length == 2){
-			String location = splitted[1];
+		else if(split.length == 2){
+			String location = split[1];
 			loc = new SpreadsheetLocation(location);
 			excelSpreadsheet[loc.getRow()][loc.getCol()] = new EmptyCell();
 			return getGridText();
 		}
 		// if command is to assigning to a new cell 
-		else if(command.contains("\"")){
-			String[] splitInput = command.split(" = ");
+		else if(direct.contains("\"")){
+			String[] splitInput = direct.split(" = ");
 			String location = splitInput[0];
 			String value = splitInput[1];
 			if(splitInput.length >= 3){
 				System.out.println(value += " = " + splitInput[2]);
 			}
 			loc = new SpreadsheetLocation(location);
-			excelSpreadsheet[loc.getRow()][loc.getCol()] = new TextCell(value.substring(1, value.length()-1)); // pass in without the quotes
+			excelSpreadsheet[loc.getRow()][loc.getCol()] = new TextCell(value.substring(1, value.length()-1)); // pass wo quotes
 	    	return getGridText(); 
 		}	
-		else if(splitted.length>1&&splitted[1].equals("=")){
-			loc=new SpreadsheetLocation(splitted[0]);
-			if (splitted[2].charAt(0) == 34){ //text cell
-				excelSpreadsheet [loc.getRow()] [loc.getCol()] = new TextCell (splitted[2].trim());
+		else if(split.length>1&&split[1].equals("=")){
+			loc=new SpreadsheetLocation(split[0]);
+			if (split[2].charAt(0) == 34){ //text cell
+				excelSpreadsheet [loc.getRow()] [loc.getCol()] = new TextCell (split[2].trim());
 			}
-			else if (splitted[2].substring(splitted[2].length()-1).equals("%")){ //a percent cell
-				excelSpreadsheet [loc.getRow()] [loc.getCol()] = new PercentCell (splitted[2].trim());	
+			else if (split[2].substring(split[2].length()-1).equals("%")){ //a percent cell
+				excelSpreadsheet [loc.getRow()] [loc.getCol()] = new PercentCell (split[2].trim());	
 			}
-			else if (splitted[2].charAt(0) == ('(')){ //a formula cell
-				excelSpreadsheet [loc.getRow()] [loc.getCol()] = new FormulaCell (splitted[2].trim());	
+			else if (split[2].charAt(0) == ('(')){ //a formula cell
+				excelSpreadsheet [loc.getRow()] [loc.getCol()] = new FormulaCell (split[2].trim());	
 			}
 			else { //value cell
-				excelSpreadsheet [loc.getRow()] [loc.getCol()] = new ValueCell (splitted[2].trim());	
+				excelSpreadsheet [loc.getRow()] [loc.getCol()] = new ValueCell (split[2].trim());	
 			}
 			return getGridText();
 		} 	
 		else {
-			loc = new SpreadsheetLocation(command);
+			loc = new SpreadsheetLocation(direct);
 			return excelSpreadsheet[loc.getRow()][loc.getCol()].fullCellText();
 		}
 	}

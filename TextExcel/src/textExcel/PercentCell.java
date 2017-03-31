@@ -10,8 +10,8 @@ public class PercentCell extends RealCell{
 		String input=getCellText();
 		if(input.length() < 10){
 			input=input.substring(0,input.indexOf("."))+"%";
-			int difference = 10 - input.length();
-			for(int i = 0; i < difference; i++){
+			int diff = 10 - input.length();
+			for(int i = 0; i < diff; i++){
 				input += " ";
 			}
 		}

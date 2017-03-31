@@ -2,19 +2,19 @@ package textExcel;
 
 public abstract class RealCell implements Cell {
 
-	private String content;
+	private String input;
 	
 	public String getCellText()
 	{
-		return content;
+		return input;
 	}
 	
-	public void setCellText(String update){
-		content = update;
+	public void setCellText(String restore){
+		input = restore;
 	}
 	
-	public RealCell(String input){
-		content = input;
+	public RealCell(String output){
+		input = output;
 	}
 	
 	public double getDoubleValue(){
@@ -23,11 +23,11 @@ public abstract class RealCell implements Cell {
 	
 	public String abbreviatedCellText() 
 	{
-		String newContent = content;
-		if (content.length()>10){
-			return content.substring(0,10);
+		String newContent = input;
+		if (input.length()>10){
+			return input.substring(0,10);
 		}
-		int spaces=10-content.length();
+		int spaces=10-input.length();
 		for (int i=0;i<spaces;i++)
 			newContent=newContent+" ";
 		return newContent;
@@ -36,6 +36,6 @@ public abstract class RealCell implements Cell {
 	@Override
 	public String fullCellText() 
 	{
-		return content;
+		return input;
 	}
 }

@@ -5,9 +5,9 @@ public class TextCell implements Cell {
 	private String txt;
 	private int length;
 	
-	public TextCell(String textCell){
-		txt = textCell;
-		length = textCell.length();
+	public TextCell(String txtCell){
+		txt = txtCell;
+		length = txtCell.length();
 	}
 	
 	@Override
