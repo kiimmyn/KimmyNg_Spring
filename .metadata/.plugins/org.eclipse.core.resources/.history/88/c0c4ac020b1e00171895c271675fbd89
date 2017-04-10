@@ -30,11 +30,11 @@ public class FormulaCell extends RealCell{
 			 for (int i=1; i < split.length; i++){
 				 if (split[i].equals(""))
 					 value *= Double.parseDouble(split[i+1]);
-				 else if (splitted[i].equals ("/"))
+				 else if (split[i].equals ("/"))
 					 value /= Double.parseDouble(split[i+1]);
-				 else if (splitted[i].equals("+"))
+				 else if (split[i].equals("+"))
 					 value += Double.parseDouble(split[i+1]);
-				 else if (splitted[i].equals("-"))
+				 else if (split[i].equals("-"))
 					 value -= Double.parseDouble(split[i+1]);
 				 else{
 			 }
@@ -44,6 +44,4 @@ public class FormulaCell extends RealCell{
 }
 	
 	
-	
-
 	
