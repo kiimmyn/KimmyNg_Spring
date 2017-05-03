@@ -28,7 +28,7 @@ public class FormulaCell extends RealCell{
 			 String[] split= formula.split(""); 
 			 double value = Double.parseDouble(split[0]);
 			 for (int i=1; i < split.length; i++){
-				 if (split[i].equals(""))
+ 				 if (split[i].equals(""))
 					 value *= Double.parseDouble(split[i+1]);
 				 else if (split[i].equals ("/"))
 					 value /= Double.parseDouble(split[i+1]);
